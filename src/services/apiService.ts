@@ -27,6 +27,7 @@ export interface Customer {
   email_id?: string;
   mobile_no?: string;
   phone?: string;
+  territory?: string;
   address_line1?: string;
   address_line2?: string;
   city?: string;
@@ -89,9 +90,9 @@ export interface PosProfile {
 
 export interface SalesOrderPayload {
   customer: string;
-  items: { 
-    item_code: string; 
-    qty: number; 
+  items: {
+    item_code: string;
+    qty: number;
     rate: number;
     discount_percentage?: number;
     discount_amount?: number;
@@ -111,15 +112,15 @@ console.log('API_BASE_URL configured as:', API_BASE_URL);
 const get = async <T>(endpoint: string): Promise<T> => {
   const fullUrl = `${API_BASE_URL}/api/${endpoint}`;
   console.log('Making GET request to:', fullUrl);
-  
+
   // Check authentication status
   const user = authService.getLoggedInUser();
   console.log('Current user from sessionStorage:', user);
   console.log('Is authenticated:', authService.isAuthenticated());
-  
+
   const headers = await authService.getAuthHeaders();
   console.log('Headers:', headers);
-  
+
   const response = await fetch(fullUrl, {
     headers: headers as HeadersInit,
     credentials: 'include',
@@ -208,7 +209,7 @@ const getPosProfileDetails = async (profileName: string): Promise<PosProfileData
 const getItems = async (itemGroups: string[], priceList?: string): Promise<Item[]> => {
   // First get the items
   const items = await get<Item[]>(`resource/Item?fields=${encodeURIComponent('["name", "item_name", "item_group", "stock_uom", "standard_rate"]')}&filters=${encodeURIComponent(JSON.stringify([["item_group", "in", itemGroups]]))}&limit_page_length=0`);
-  
+
   console.log('Fetched items from API:', items.length);
   // Log a sample item to debug price issues
   if (items.length > 0) {
@@ -219,14 +220,14 @@ const getItems = async (itemGroups: string[], priceList?: string): Promise<Item[
       standard_rate_type: typeof items[0].standard_rate
     });
   }
-  
+
   // Create a map for prices from Price List if provided
   const priceMap = new Map<string, number>();
   if (priceList) {
     try {
       console.log('Fetching prices from Price List:', priceList);
       const itemPrices = await get<any[]>(`resource/Item Price?fields=${encodeURIComponent('["item_code", "price_list_rate"]')}&filters=${encodeURIComponent(JSON.stringify([["price_list", "=", priceList], ["item_code", "in", items.map(item => item.name)]]))}&limit_page_length=0`);
-      
+
       itemPrices.forEach(ip => {
         if (ip.price_list_rate && !isNaN(Number(ip.price_list_rate))) {
           priceMap.set(ip.item_code, Number(ip.price_list_rate));
@@ -237,35 +238,35 @@ const getItems = async (itemGroups: string[], priceList?: string): Promise<Item[
       console.warn('Could not fetch prices from Price List:', error);
     }
   }
-  
+
   // Then get stock quantities from Bin doctype
   try {
     const bins = await get<any[]>(`resource/Bin?fields=${encodeURIComponent('["item_code", "actual_qty"]')}&filters=${encodeURIComponent(JSON.stringify([["item_code", "in", items.map(item => item.name)]]))}&limit_page_length=0`);
-    
+
     // Create a map of item_code to actual_qty
     const stockMap = new Map();
     bins.forEach(bin => {
       stockMap.set(bin.item_code, (stockMap.get(bin.item_code) || 0) + bin.actual_qty);
     });
-    
+
     // Add actual_qty to items and ensure standard_rate is a number (not null/undefined)
     // Use Price List rate if available, otherwise fall back to standard_rate
     return items.map(item => {
       let rate = item.standard_rate;
-      
+
       // If we have a price from Price List, use it instead
       if (priceMap.has(item.name)) {
         rate = priceMap.get(item.name)!;
         console.log(`Using Price List rate for ${item.name}: ${rate} (instead of standard_rate: ${item.standard_rate})`);
       }
-      
+
       // Handle null, undefined, or non-numeric values
       const standardRate = (rate !== null && rate !== undefined && !isNaN(Number(rate))) ? Number(rate) : 0;
-      
+
       if (standardRate === 0 && rate !== 0) {
         console.warn(`Item ${item.name} (${item.item_name}) has invalid standard_rate:`, rate);
       }
-      
+
       return {
         ...item,
         standard_rate: standardRate,
@@ -278,18 +279,18 @@ const getItems = async (itemGroups: string[], priceList?: string): Promise<Item[
     // Use Price List rate if available, otherwise fall back to standard_rate
     return items.map(item => {
       let rate = item.standard_rate;
-      
+
       // If we have a price from Price List, use it instead
       if (priceMap.has(item.name)) {
         rate = priceMap.get(item.name)!;
       }
-      
+
       const standardRate = (rate !== null && rate !== undefined && !isNaN(Number(rate))) ? Number(rate) : 0;
-      
+
       if (standardRate === 0 && rate !== 0) {
         console.warn(`Item ${item.name} (${item.item_name}) has invalid standard_rate:`, rate);
       }
-      
+
       return {
         ...item,
         standard_rate: standardRate,
@@ -325,19 +326,19 @@ const getSalesOrders = async (owner: string): Promise<SalesOrder[]> => {
 const getSalesOrder = async (order_id: string): Promise<any> => {
   console.log('Fetching order details for:', order_id);
   console.log('API_BASE_URL:', API_BASE_URL);
-  
-          // Include payment-related fields to fetch
-          const fields = [
-            'name', 'docstatus', 'customer', 'customer_name', 'grand_total', 
-            'outstanding_amount', 'advance_paid', 'creation', 'items'
-          ];
+
+  // Include payment-related fields to fetch
+  const fields = [
+    'name', 'docstatus', 'customer', 'customer_name', 'grand_total',
+    'outstanding_amount', 'advance_paid', 'creation', 'items'
+  ];
   const fieldsParam = encodeURIComponent(JSON.stringify(fields));
-  
+
   // Try different endpoint formats with fields parameter
   const endpoint = `resource/Sales Order/${encodeURIComponent(order_id)}?fields=${fieldsParam}`;
   console.log('API endpoint:', endpoint);
   console.log('Full URL will be:', `${API_BASE_URL}/api/${endpoint}`);
-  
+
   try {
     return await get<any>(endpoint);
   } catch (error) {
