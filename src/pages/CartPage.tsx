@@ -3,7 +3,7 @@ import { useCartStore } from '../store/cartStore';
 import { useSettingsStore } from '../store/settingsStore';
 import { useDataStore } from '../store/dataStore';
 import { apiService } from '../services/apiService';
-import { Title, Button, Group, Text, SimpleGrid, NumberInput, ActionIcon, Badge, Card, Select, Stack, Divider, Alert } from '@mantine/core';
+import { Title, Button, Group, Text, NumberInput, ActionIcon, Badge, Card, Select, Stack, Divider, Alert } from '@mantine/core';
 import { IconTrash, IconUser, IconMapPin, IconShoppingCart, IconCheck, IconAlertCircle } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
