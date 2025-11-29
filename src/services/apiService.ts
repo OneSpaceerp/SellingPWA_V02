@@ -106,7 +106,7 @@ export interface SalesOrderPayload {
   [key: string]: any;
 }
 
-const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || '';
+const API_BASE_URL = '';
 console.log('API_BASE_URL configured as:', API_BASE_URL);
 
 const get = async <T>(endpoint: string): Promise<T> => {
