@@ -1,5 +1,5 @@
 const login = async (usr: string, pwd: string): Promise<{ success: boolean; user?: string; error?: string }> => {
-  const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+  const API_BASE_URL = '';
   try {
     const response = await fetch(`${API_BASE_URL}/api/method/login`, {
       method: 'POST',
@@ -98,7 +98,7 @@ const getAuthHeaders = async (): Promise<HeadersInit> => {
     // Try to get CSRF token from a GET request first
     console.log('Attempting to fetch CSRF token...');
     try {
-      const csrfResponse = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/method/frappe.auth.get_logged_user`, {
+      const csrfResponse = await fetch('/api/method/frappe.auth.get_logged_user', {
         method: 'GET',
         credentials: 'include',
       });
