@@ -63,7 +63,9 @@ export function AppLayout() {
           zIndex: 'var(--z-fixed)',
           background: 'var(--primary-gradient)',
           borderBottom: 'none',
-          boxShadow: 'var(--shadow-lg)'
+          boxShadow: 'var(--shadow-lg)',
+          paddingTop: 'env(safe-area-inset-top)',
+          height: 'calc(70px + env(safe-area-inset-top))'
         }}
       >
         <Group h="100%" justify="space-between" style={{ padding: '0 1rem' }}>
@@ -122,8 +124,8 @@ export function AppLayout() {
 
       {/* Main Content */}
       <AppShell.Main style={{
-        paddingTop: '70px',
-        paddingBottom: '80px',
+        paddingTop: 'calc(70px + env(safe-area-inset-top) + 24px)',
+        paddingBottom: 'calc(80px + env(safe-area-inset-bottom) + 24px)',
         minHeight: '100vh',
         margin: 0,
         paddingLeft: 0,
@@ -148,7 +150,9 @@ export function AppLayout() {
           background: 'var(--surface-elevated)',
           borderTop: '1px solid var(--gray-200)',
           boxShadow: 'var(--shadow-2xl)',
-          padding: '0.5rem 0.75rem'
+          padding: '0.5rem 0.75rem',
+          paddingBottom: 'calc(0.5rem + env(safe-area-inset-bottom))',
+          height: 'calc(80px + env(safe-area-inset-bottom))'
         }}
       >
         <Tabs value={activeTab} onChange={(value) => navigate(value || '/')}>
