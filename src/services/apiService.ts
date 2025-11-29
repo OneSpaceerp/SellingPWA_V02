@@ -429,17 +429,33 @@ const getCustomerDetails = async (customerId: string): Promise<any> => {
 };
 
 const getCustomerContacts = async (customerId: string): Promise<Contact[]> => {
-  // For now, return empty array - contacts will need to be added fresh
-  // TODO: Implement proper contact fetching when we have access to proper ERPNext API
-  console.log('Loading contacts for customer:', customerId);
-  return [];
+  try {
+    const fields = ['name', 'first_name', 'last_name', 'email_id', 'mobile_no', 'phone', 'is_primary_contact'];
+    // Filter by Dynamic Link to find contacts linked to this customer
+    const filters = [
+      ['Dynamic Link', 'link_doctype', '=', 'Customer'],
+      ['Dynamic Link', 'link_name', '=', customerId]
+    ];
+    return getList<Contact[]>('Contact', filters, fields);
+  } catch (error) {
+    console.error('Failed to fetch customer contacts:', error);
+    return [];
+  }
 };
 
 const getCustomerAddresses = async (customerId: string): Promise<Address[]> => {
-  // For now, return empty array - addresses will need to be added fresh
-  // TODO: Implement proper address fetching when we have access to proper ERPNext API
-  console.log('Loading addresses for customer:', customerId);
-  return [];
+  try {
+    const fields = ['name', 'address_title', 'address_line1', 'address_line2', 'city', 'state', 'pincode', 'country', 'is_primary_address'];
+    // Filter by Dynamic Link to find addresses linked to this customer
+    const filters = [
+      ['Dynamic Link', 'link_doctype', '=', 'Customer'],
+      ['Dynamic Link', 'link_name', '=', customerId]
+    ];
+    return getList<Address[]>('Address', filters, fields);
+  } catch (error) {
+    console.error('Failed to fetch customer addresses:', error);
+    return [];
+  }
 };
 
 const updateContact = async (contactId: string, data: any): Promise<any> => {
