@@ -65,10 +65,13 @@ export function AppLayout() {
           borderBottom: 'none',
           boxShadow: 'var(--shadow-lg)',
           paddingTop: 'env(safe-area-inset-top)',
-          height: 'calc(70px + env(safe-area-inset-top))'
+          height: 'calc(70px + env(safe-area-inset-top))',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center'
         }}
       >
-        <Group h="100%" justify="space-between" style={{ padding: '0 1rem' }}>
+        <Group h="100%" justify="space-between" style={{ padding: '0 1rem', width: '100%' }}>
           <Group gap="sm" align="center">
             <div
               className="hover-scale"
@@ -124,8 +127,8 @@ export function AppLayout() {
 
       {/* Main Content */}
       <AppShell.Main style={{
-        paddingTop: 'calc(70px + env(safe-area-inset-top) + 24px)',
-        paddingBottom: 'calc(80px + env(safe-area-inset-bottom) + 24px)',
+        paddingTop: 'calc(90px + env(safe-area-inset-top))', // Increased padding
+        paddingBottom: 'calc(90px + env(safe-area-inset-bottom))', // Increased padding
         minHeight: '100vh',
         margin: 0,
         paddingLeft: 0,
@@ -133,7 +136,8 @@ export function AppLayout() {
         width: '100%',
         position: 'relative',
         overflow: 'auto',
-        background: 'var(--gray-50)'
+        background: 'var(--gray-50)',
+        display: 'block'
       }}>
         <Outlet />
       </AppShell.Main>
