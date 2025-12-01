@@ -184,22 +184,6 @@ a:hover {
    =================================== */
 
 .mantine-AppShell-root {
-  margin: 0 !important;
-  padding: 0 !important;
-  width: 100% !important;
-  background: var(--gray-50);
-}
-
-.mantine-AppShell-main {
-  margin: 0 !important;
-  padding: 0 !important;
-  width: 100% !important;
-  background: var(--gray-50);
-}
-
-/* Modern Button Styles */
-.mantine-Button-root {
-  border-radius: var(--radius-lg);
   font-weight: 600;
   transition: all var(--transition-base);
   box-shadow: var(--shadow-sm);
