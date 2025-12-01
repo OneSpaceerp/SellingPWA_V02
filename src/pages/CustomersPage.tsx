@@ -89,7 +89,7 @@ export function CustomersPage() {
                             background: 'var(--surface-card)',
                             cursor: 'pointer',
                         }}
-                        onClick={() => navigate(`/edit-customer/${customer.name}`)}
+                        onClick={() => navigate(`/edit-customer/${encodeURIComponent(customer.name)}`)}
                     >
                         {/* Customer Icon */}
                         <div style={{
